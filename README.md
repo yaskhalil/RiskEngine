@@ -46,12 +46,18 @@ README.md # Project documentation
 ### 1️⃣ Generate Predictions (Python)
 ```bash
 python make_predictions.py data/aapl.csv
+```
 Outputs data/preds.txt containing predictions with timestamps.
-2️⃣ Run Backtest (Mojo)
+
+### 2️⃣ Run Backtest (Mojo)
+```bash
 mojo life/backtest.mojo
+```
 Reads data/preds.txt and data/close.txt
 Outputs performance metrics and saves logs/kdb_trades.csv
+
 Example Output
+```bash
 [mojo] preds parsed:  210
 [mojo] close parsed:  210
 [mojo] aligned length:  210
@@ -62,18 +68,22 @@ Example Output
 [mojo] max drawdown:  0.1792
 [mojo] volatility:  0.0107
 [mojo] wrote logs/kdb_trades.csv
-Metrics Computed
-Final Equity – Ending capital after backtest
-Max Drawdown – Largest equity peak-to-trough decline
-Volatility – Standard deviation of returns
-PnL per Trade – Profit or loss of each execution
-Future Improvements
-Integrate direct KDB+ write from Mojo
-Add alternative models (SMA, momentum)
-Support multi-asset portfolios
-Add real-time streaming mode
-Why This Project?
-Showcases Mojo + KDB+ integration
-Demonstrates end-to-end quant workflow
-Optimized for Two Sigma / HRT / Citadel internship portfolios
-Combines AI modeling and risk management
+```
+### 3️⃣ Metrics Computed
+- Final Equity – Ending capital after backtest
+- Max Drawdown – Largest equity peak-to-trough decline
+- Volatility – Standard deviation of returns
+- PnL per Trade – Profit or loss of each execution
+
+### Future Improvements
+- Integrate direct KDB+ write from Mojo
+- Add alternative models (SMA, momentum)
+- Support multi-asset portfolios
+- Add real-time streaming mode
+
+
+### Why This Project?
+- Showcases Mojo + KDB+ integration
+- Demonstrates end-to-end quant workflow
+- Optimized for Two Sigma / HRT / Citadel internship portfolios
+- Combines AI modeling and risk management
