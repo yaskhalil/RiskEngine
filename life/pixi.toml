@@ -1,0 +1,11 @@
+[workspace]
+authors = ["Yaseen Khalil <168372597+yaskhalil@users.noreply.github.com>"]
+channels = ["https://conda.modular.com/max-nightly", "conda-forge"]
+name = "life"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+mojo = ">=25.6.0.dev2025080821,<26"
