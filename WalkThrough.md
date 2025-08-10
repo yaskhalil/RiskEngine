@@ -1,144 +1,79 @@
 # 🧠 MojoQuantBacktester
 
 ## Overview
+This project simulates a **quantitative trading workflow** using **Modular Mojo** for high-performance computation, paired with **KDB+** for trade logging and performance analytics.
 
-This project simulates a quantitative trading workflow using **Modular Mojo**, a high-performance ML language, paired with **KDP+** for trade logging and performance analytics.
-
-It includes:
-
-* LSTM-based trade signal generation
-* Modular Mojo backtesting engine
-* Risk metric computation (Sharpe, volatility, drawdown)
-* KDP+-formatted trade logs for querying/evaluation
+The workflow includes:
+- LSTM-based trade signal generation (Python)
+- Modular Mojo backtesting engine
+- Risk metric computation (Sharpe, volatility, drawdown)
+- KDB+-formatted trade logs for querying/evaluation
 
 ---
 
 ## Tech Stack
-
-* **Mojo**: Signal generation and fast simulation
-* **Python (optional)**: For prototyping or metrics
-* **KDP+**: Trade log schema and storage
-* **CSV (e.g. AAPL OHLCV)**: Input data
-* **NumPy / Pandas (optional)**: Risk analytics
+- **Mojo** – High-performance backtesting engine and risk metrics
+- **Python** – LSTM model training and prediction generation
+- **KDB+** – Trade logging and querying
+- **CSV Data** – Historical OHLCV price data (e.g., AAPL)
+- **NumPy / PyTorch** – Data processing and model training
 
 ---
 
 ## System Architecture
-
-1. Load historical market data (e.g., AAPL.csv)
-2. Preprocess using rolling normalization
-3. Train LSTM model in Mojo
-4. Generate "BUY", "SELL", or "HOLD" signals
-5. Simulate trades through backtesting loop
-6. Log trades and risk metrics to KDP+ format
-7. Evaluate using metrics like Sharpe, drawdown, volatility
+1. **Data Load** – Historical CSV (e.g., `data/aapl.csv`)
+2. **Preprocessing** – Rolling z-score normalization
+3. **LSTM Model (Python)** – Train model to forecast returns
+4. **Signal Generation** – Output `BUY`, `SELL`, or `HOLD`
+5. **Backtesting (Mojo)** – Simulate trades and track equity
+6. **Risk Metrics** – Compute Sharpe, volatility, drawdown
+7. **KDB+ Logging** – Save trade logs in structured format
 
 ---
 
 ## Project Structure
-
-* `data/`: Historical price data (CSV)
-* `models/`: LSTM model definition in Mojo
-* `logs/`: Output trade logs (KDP+ JSON)
-* `risk/`: Risk metric calculators (e.g., Sharpe)
-* `main.mojo`: Orchestrates strategy + backtest loop
-* `README.md`: You're reading it
-
----
-
-## Build Phases
-
-### Phase 1 – Setup
-
-* Install Mojo CLI from [Modular](https://www.modular.com/mojo)
-* Set up file structure:
-
-  * `data/`, `models/`, `logs/`, `risk/`, `main.mojo`
-* Download AAPL OHLCV data and place it in `data/aapl.csv`
-
-### Phase 2 – LSTM Model in Mojo
-
-* Implement a basic LSTM in Mojo using fixed window input (e.g. 20 past bars)
-* Input features: close price normalized by rolling mean/volatility
-* Output target: next-day return or up/down classification
-* Convert signal to `BUY`, `SELL`, or `HOLD`
-
-### Phase 3 – Backtest Engine
-
-* Load data and apply LSTM model to generate signals
-* Track positions (e.g. long, flat) and calculate returns
-* Execute a virtual trade if signal changes
-* Log each trade using KDP+ schema with:
-
-  * timestamp, action, price, reason, and associated risk stats
-
-Example KDP+ Log:
-
-```json
-{
-  "timestamp": "2025-08-06T13:00:00Z",
-  "symbol": "AAPL",
-  "action": "BUY",
-  "price": 205.40,
-  "position": "LONG",
-  "reason": "LSTM:0.91",
-  "risk": {
-    "vol": 0.023,
-    "drawdown": 0.03
-  }
-}
-```
-
-### Phase 4 – Risk Model
-
-* Compute Sharpe Ratio: mean return / std deviation of returns
-* Calculate max drawdown: peak-to-trough drop in equity curve
-* Estimate volatility: rolling standard deviation of returns
-* Output summary stats to log or CLI
-
-### Phase 5 – Evaluation
-
-* Parse `logs/trades.json` to aggregate metrics
-* Output PnL, win/loss rate, Sharpe, drawdown
-* Optional: use Python/Streamlit to chart equity curve, trade points, and histograms
+data/ # Historical CSV price data
+logs/ # Output trade logs (CSV / JSON)
+life/ # Mojo backtesting files
+make_predictions.py # Python script for LSTM model
+backtest.mojo # Mojo backtest engine
+README.md # Project documentation
 
 ---
 
-## Example Output
+## How to Run
 
-```
---- Backtest Results ---
-Total Trades:        104
-Win Rate:            58%
-Sharpe Ratio:        1.45
-Max Drawdown:        -6.2%
-Volatility:          2.1%
-Total Return:        12.4%
-```
-
----
-
-## Stretch Goals
-
-* Add strategy toggle (SMA vs LSTM)
-* Add volatility filter
-* Support multiple tickers or assets
-* Dashboard with Plotly or Streamlit
-* Upload logs to Supabase or Firebase for querying
-
----
-
-## Why This Project?
-
-* Highlights cutting-edge tooling (Mojo, KDP+)
-* Demonstrates real quant skills: modeling, simulation, risk
-* Aligns with Two Sigma, HRT, Citadel internship pipelines
-* Optimized for resume, application portals, and GitHub
-
----
-
-## Resources
-
-* [Modular Mojo Docs](https://docs.modular.com/mojo)
-* [KDP+ Spec](#) – insert link to your internal spec or JSON schema
-* [Two Sigma Early ID Program](https://www.twosigma.com/join-us/events-and-programs/early-id/)
+### 1️⃣ Generate Predictions (Python)
+```bash
+python make_predictions.py data/aapl.csv
+Outputs data/preds.txt containing predictions with timestamps.
+2️⃣ Run Backtest (Mojo)
+mojo life/backtest.mojo
+Reads data/preds.txt and data/close.txt
+Outputs performance metrics and saves logs/kdb_trades.csv
+Example Output
+[mojo] preds parsed:  210
+[mojo] close parsed:  210
+[mojo] aligned length:  210
+[mojo] step  0  ts= 2025-06-11  action= HOLD  pred= -0.912047  price= 198.78
+[mojo] step  100  ts= 2025-01-16  action= HOLD  pred= -0.739704  price= 228.26
+[mojo] trades written:  210
+[mojo] final equity:  0.8780
+[mojo] max drawdown:  0.1792
+[mojo] volatility:  0.0107
+[mojo] wrote logs/kdb_trades.csv
+Metrics Computed
+Final Equity – Ending capital after backtest
+Max Drawdown – Largest equity peak-to-trough decline
+Volatility – Standard deviation of returns
+PnL per Trade – Profit or loss of each execution
+Future Improvements
+Integrate direct KDB+ write from Mojo
+Add alternative models (SMA, momentum)
+Support multi-asset portfolios
+Add real-time streaming mode
+Why This Project?
+Showcases Mojo + KDB+ integration
+Demonstrates end-to-end quant workflow
+Optimized for Two Sigma / HRT / Citadel internship portfolios
+Combines AI modeling and risk management
