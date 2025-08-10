@@ -69,7 +69,7 @@ Example Output
 [mojo] volatility:  0.0107
 [mojo] wrote logs/kdb_trades.csv
 ```
-### 3️⃣ Metrics Computed
+### Metrics Computed
 - Final Equity – Ending capital after backtest
 - Max Drawdown – Largest equity peak-to-trough decline
 - Volatility – Standard deviation of returns
